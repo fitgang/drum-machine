@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drum Machine</title>
+  <style>
+    body {
+      min-height: 99vh;
+      margin: 0.5vh 0.5vw;
+      background-color: #25255bde;
+      color: #fff;
+    }
+    
+    body,
+    #bank {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #drum-machine,
+    ul {
+      display: grid;
+    }
+    
+    #drum-machine {
+      grid-template-areas: "pads display""pads bank";
+      border: 8px solid #ffff00;
+      background: #25255b;
+      padding: 10px 20px 10px 10px;
+    }
+    
+    ul {
+      grid-area: pads;
+      padding: 0;
+      grid-template-columns: 1fr 1fr 1fr;
+      margin: 0 50px 0 0;
+    }
+    
+    .drum-pad {
+      list-style: none;
+      padding: 3px 0px 0px 3px;
+      font-size: 1.3rem;
+      width: 80px;
+      height: 80px;
+      margin: 8px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 2px 2px #000;
+      background: #0000002e;
+      box-sizing: border-box;
+    }
+    
+    .drum-pad:hover,
+    .drum-pad:focus,
+    #switchCase:hover,
+    #switchCase:focus {
+      cursor: pointer;
+    }
+    
+    .press {
+      box-shadow: none;
+      border: 2px solid #000;
+    }
+    
+    #display,
+    #bank {
+      font-size: 1.2rem;
+    }
+    
+    #display,
+    .switch {
+      background: #fff;
+    }
+    
+    #display {
+      grid-area: display;
+      place-self: center;
+      width: 110px;
+      height: 20px;
+      color: #000;
+      text-align: center;
+      padding: 10px;
+      font-weight: 900;
+      border: 4px solid #fff;
+      box-shadow: 1px 2px 10px 0px #000 inset;
+    }
+    
+    #bank {
+      grid-area: bank;
+      flex-direction: column;
+    }
+    
+    #switchCase {
+      width: 70px;
+      height: 30px;
+      background: #00000052;
+      margin-top: 5px;
+    }
+    
+    .switch {
+      width: 30px;
+      height: 26px;
+      margin: 2px 5px;
+    }
+    
+    @media screen and (max-width: 550px) {
+      #drum-machine {
+        display: flex;
+        flex-direction: column;
+      }
+      ul {
+        margin: 0;
+      }
+      #display {
+        margin: 20px 0;
+      }
+    }
+    
+    @media screen and (max-width: 360px) {
+      #drum-machine {
+        border: 0;
+        padding: 10px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="drum-machine"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+  <!-- <script src="https://codepen.io/freeCodeCamp/pen/MJyNMd.js"></script> -->
+  <script>
+    const bankOne = [{
+      keyCode: 81,
+      keyTrigger: 'Q',
+      id: 'Heater-1',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3'
+    }, {
+      keyCode: 87,
+      keyTrigger: 'W',
+      id: 'Heater-2',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3'
+    }, {
+      keyCode: 69,
+      keyTrigger: 'E',
+      id: 'Heater-3',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-3.mp3'
+    }, {
+      keyCode: 65,
+      keyTrigger: 'A',
+      id: 'Heater-4',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3'
+    }, {
+      keyCode: 83,
+      keyTrigger: 'S',
+      id: 'Clap',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3'
+    }, {
+      keyCode: 68,
+      keyTrigger: 'D',
+      id: 'Open-HH',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Dsc_Oh.mp3'
+    }, {
+      keyCode: 90,
+      keyTrigger: 'Z',
+      id: "Kick-n'-Hat",
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Kick_n_Hat.mp3'
+    }, {
+      keyCode: 88,
+      keyTrigger: 'X',
+      id: 'Kick',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3'
+    }, {
+      keyCode: 67,
+      keyTrigger: 'C',
+      id: 'Closed-HH',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3'
+    }];
+
+    const bankTwo = [{
+      keyCode: 81,
+      keyTrigger: 'Q',
+      id: 'Chord-1',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Chord_1.mp3'
+    }, {
+      keyCode: 87,
+      keyTrigger: 'W',
+      id: 'Chord-2',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Chord_2.mp3'
+    }, {
+      keyCode: 69,
+      keyTrigger: 'E',
+      id: 'Chord-3',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Chord_3.mp3'
+    }, {
+      keyCode: 65,
+      keyTrigger: 'A',
+      id: 'Shaker',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Give_us_a_light.mp3'
+    }, {
+      keyCode: 83,
+      keyTrigger: 'S',
+      id: 'Open-HH',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Dry_Ohh.mp3'
+    }, {
+      keyCode: 68,
+      keyTrigger: 'D',
+      id: 'Closed-HH',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Bld_H1.mp3'
+    }, {
+      keyCode: 90,
+      keyTrigger: 'Z',
+      id: 'Punchy-Kick',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/punchy_kick_1.mp3'
+    }, {
+      keyCode: 88,
+      keyTrigger: 'X',
+      id: 'Side-Stick',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/side_stick_1.mp3'
+    }, {
+      keyCode: 67,
+      keyTrigger: 'C',
+      id: 'Snare',
+      url: 'https://s3.amazonaws.com/freecodecamp/drums/Brk_Snr.mp3'
+    }];
+
+    // components
+    const Display = props => /*#__PURE__*/ React.createElement("div", {
+      id: "display"
+    }, props.value);
+
+    const Bank = props => {
+      const m = props.bank ? "35px" : "";
+      return /*#__PURE__*/ (
+        React.createElement("div", {
+            id: "bank"
+          }, "Bank", /*#__PURE__*/
+
+          React.createElement("div", {
+              id: "switchCase",
+              onClick: props.changeBank
+            }, /*#__PURE__*/
+            React.createElement("div", {
+              className: "switch",
+              style: {
+                marginLeft: m
+              }
+            }))));
+
+
+
+    };
+
+    // parent component
+    class Machine extends React.Component {
+      constructor(props) {
+        super(props);
+
+        // 'bankOne' and 'bankTwo' are the music objects from fcc example
+        this.state = {
+          bank: bankOne,
+          str: ""
+        };
+
+        this.playMusic = this.playMusic.bind(this);
+        this.changeBank = this.changeBank.bind(this);
+      }
+
+      componentDidMount() {
+        document.addEventListener("keypress", this.playMusic);
+      }
+
+      // plays the music on click or keypress
+      playMusic(event) {
+        let target = event.target;
+
+        // check if the target is the document body
+        if (target == document.body) {
+          // check if the key pressed is one of the mentioned keys
+          let k = event.key.toUpperCase();
+          if (this.state.bank.some(o => o.keyTrigger === k))
+            target = document.getElementById("pad" + k);
+          else
+            return;
+        }
+
+        // calls the api of child audio element of specified parent element
+        target.firstElementChild.play();
+        this.setState({
+          str: target.getAttribute("name")
+        });
+        target.classList.add("press");
+        setTimeout(() => target.classList.remove("press"), 150);
+      }
+
+      changeBank() {
+        this.setState(state => ({
+          bank: state.bank === bankOne ? bankTwo : bankOne
+        }));
+
+      }
+
+      render() {
+        // element to be clciked to play music
+        let pads = this.state.bank.map((o) => /*#__PURE__*/
+          React.createElement("li", {
+              className: "drum-pad",
+              id: "pad" + o.keyTrigger,
+              name: o.id,
+              onClick: this.playMusic
+            },
+
+            o.keyTrigger, /*#__PURE__*/
+            React.createElement("audio", {
+              className: "clip",
+              id: o.keyTrigger,
+              src: o.url
+            })));
+
+
+
+        return /*#__PURE__*/ (
+          React.createElement(React.Fragment, null, /*#__PURE__*/
+            React.createElement("ul", null, pads), /*#__PURE__*/
+            React.createElement(Display, {
+              value: this.state.str
+            }), /*#__PURE__*/
+            React.createElement(Bank, {
+              changeBank: this.changeBank,
+              bank: this.state.bank === bankOne ? 0 : 1
+            })));
+
+
+
+      }
+    }
+
+
+    ReactDOM.render( /*#__PURE__*/ React.createElement(Machine, null), document.getElementById("drum-machine"));
+  </script>
+</body>
+
+</html>
